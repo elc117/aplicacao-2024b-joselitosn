@@ -5,32 +5,25 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
-public class MySQLProvider implements DatabaseProvider {
-    private final String DB_URL;
-    private final String DB_USERNAME;
-    private final String DB_PASSWORD;
+public class MySQLProvider extends DatabaseProvider {
 
-    private Connection connection;
-
-    public MySQLProvider(String url, String database,String username, String password) {
-        this.DB_URL = "jdbc:mysql://" + url + "/" + database;
-        this.DB_USERNAME = username;
-        this.DB_PASSWORD = password;
+    private MySQLProvider(Builder builder) {
+        super(builder);
     }
 
-    @Override
-    public Connection getConnection() throws SQLException {
-        try {
-            if (connection == null || connection.isClosed()) {
-                connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+    public static class Builder extends DatabaseProvider.Builder {
+
+        @Override
+        public MySQLProvider build() {
+            if (this.url == null || this.url.isEmpty()) {
+                throw new IllegalArgumentException("URL cannot be null or empty.");
             }
-        } catch (SQLException e) {
-            System.err.println("Erro ao conectar ao banco de dados MySQL: " + e.getMessage());
-            throw e;
-        }
-        return connection;
-    }
+            if (this.properties.getProperty("database") == null || this.properties.getProperty("database").isEmpty()){
+                throw new IllegalArgumentException("Database cannot be null or empty.");
+            }
+            this.url("jdbc:mysql://" + this.url + "/" + this.properties.getProperty("database"));
 
-    @Override
-    public void closeConnection() throws SQLException { connection.close(); }
+            return new MySQLProvider(this);
+        }
+    }
 }

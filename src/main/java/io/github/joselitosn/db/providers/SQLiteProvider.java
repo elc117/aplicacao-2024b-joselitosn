@@ -1,35 +1,20 @@
 package io.github.joselitosn.db.providers;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.DriverManager;
+public class SQLiteProvider extends DatabaseProvider {
 
-public class SQLiteProvider implements DatabaseProvider {
-    private Connection connection;
-    private final String DB_URL;
-
-    public SQLiteProvider(String dbPath) {
-        this.DB_URL = "jdbc:sqlite:" + dbPath;
+    private SQLiteProvider(Builder builder) {
+        super(builder);
     }
 
-    @Override
-    public Connection getConnection() throws SQLException {
-        try {
-            if (connection == null || connection.isClosed()) {
-                connection = DriverManager.getConnection(DB_URL);
+    public static class Builder extends DatabaseProvider.Builder {
+
+        @Override
+        public SQLiteProvider build() {
+            if (this.url == null || this.url.isEmpty()) {
+                throw new IllegalArgumentException("URL cannot be null or empty.");
             }
-            return connection;
-        } catch (SQLException e) {
-            System.err.println("Error connecting to database: " + e.getMessage());
-            throw e;
-        }
-    }
-
-    @Override
-    public void closeConnection() throws SQLException {
-        if (this.connection != null && !this.connection.isClosed()) {
-            this.connection.close();
-            this.connection = null;
+            this.url("jdbc:sqlite:" + this.url);
+            return new SQLiteProvider(this);
         }
     }
 }

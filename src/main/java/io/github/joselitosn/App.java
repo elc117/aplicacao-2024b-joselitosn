@@ -38,12 +38,22 @@ public class App {
 
         // select provider based on config file
         DatabaseProvider provider;
-        if (dbProvider.equals("SQLite")) {
-            provider = new SQLiteProvider(dbUrl);
-        } else if (dbProvider.equals("MySQL")) {
-            provider = new MySQLProvider(dbUrl, dbDatabase, dbUsername, dbPassword);
-        } else {
-            throw new RuntimeException("Provedor de banco de dados inválido: " + dbProvider);
+        switch (dbProvider) {
+            case "SQLite":
+                provider = new SQLiteProvider.Builder()
+                        .url(dbUrl)
+                        .build();
+                break;
+            case "MySQL":
+                provider = new MySQLProvider.Builder().
+                        url(dbUrl).
+                        database(dbDatabase).
+                        username(dbUsername).
+                        password(dbPassword).
+                        build();
+                break;
+            default:
+                throw new RuntimeException("Provedor de banco de dados inválido: " + dbProvider);
         }
 
         // instância o singleton com o provider selecionado
