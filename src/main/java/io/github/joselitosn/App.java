@@ -23,53 +23,15 @@ import io.github.joselitosn.notifications.NotificationHandler;
 import io.github.joselitosn.notifications.NtfyNotification;
 import io.github.joselitosn.notifications.SMTPNotification;
 
+import javax.swing.*;
+
 public class App {
     public static void main(String[] args) {
-        String dbProvider;
-        String dbUrl;
-        String dbDatabase;
-        String dbUsername;
-        String dbPassword;
-
         LogManager logManager = LogManager.getInstance();
-
-        // read database file location DB_URL from config file
-        Properties properties = new Properties();
-        try {
-            properties.load(Files.newInputStream(Paths.get("db.properties")));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        dbProvider = properties.getProperty("DB_PROVIDER");
-        dbUrl = properties.getProperty("DB_URL");
-        dbDatabase = properties.getProperty("DB_DATABASE");
-        dbUsername = properties.getProperty("DB_USERNAME");
-        dbPassword = properties.getProperty("DB_PASSWORD");
-
-
-        // select provider based on config file
-        DatabaseProvider provider;
-        switch (dbProvider) {
-            case "SQLite":
-                provider = new SQLiteProvider.Builder()
-                        .url(dbUrl)
-                        .build();
-                break;
-            case "MySQL":
-                provider = new MySQLProvider.Builder().
-                        url(dbUrl).
-                        database(dbDatabase).
-                        username(dbUsername).
-                        password(dbPassword).
-                        build();
-                break;
-            default:
-                throw new RuntimeException("Provedor de banco de dados inválido: " + dbProvider);
-        }
-
         // instância o singleton com o provider selecionado
-        DatabaseManager dbManager = DatabaseManager.getInstance(provider);
+        DatabaseManager dbManager = DatabaseManager.getInstance();
         dbManager.registerSubscriber(new LogEventListener(logManager.getLogger()));
+
         Connection connection = dbManager.getConnection();
 
         Notification notification = new Notification("Test", "Primeiro Teste");
@@ -81,7 +43,7 @@ public class App {
 
         // create table
         try {
-            createTable(connection);
+            createTables(connection);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -92,13 +54,19 @@ public class App {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new NotificationSchedulerGUI();
+            }
+        });
     }
 
     // create table
-    public static void createTable(Connection connection) throws SQLException {
+    public static void createTables(Connection connection) throws SQLException {
         // create table if not exists using prepared statement in sqlite
-        String sql = "CREATE TABLE IF NOT EXISTS mytable (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)";
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.execute();
+        String sqlNotification = "CREATE TABLE IF NOT EXISTS notification (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, message TEXT, creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, execution_time TIMESTAMP)";
+        PreparedStatement statementNotification = connection.prepareStatement(sqlNotification);
+        statementNotification.execute();
     }
 }
