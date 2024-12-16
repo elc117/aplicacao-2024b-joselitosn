@@ -64,10 +64,8 @@ classDiagram
     }
     
     DatabaseProvider --o Builder : possui
-    SQLiteProvider --o Builder : possui
-    MySQLProvider --o Builder : possui
-    DatabaseProvider --|> SQLiteProvider : Herança
-    DatabaseProvider --|> MySQLProvider : Herança
+    DatabaseProvider <|-- SQLiteProvider : Herança
+    DatabaseProvider <|-- MySQLProvider : Herança
 ````
 
 ## Chain of Responsibility
@@ -95,8 +93,8 @@ classDiagram
         +handle(notification)
     }
     
-    NotificationHandler --|> SMTPNotification : Herança
-    NotificationHandler --|> NtfyNotification : Herança
+    NotificationHandler <|-- SMTPNotification : Herança
+    NotificationHandler <|-- NtfyNotification : Herança
 ````
 
 ## Observer
@@ -169,4 +167,53 @@ classDiagram
         
         +NotificationScheduleGUI()
     }
+````
+# Diagramas de Sequência
+## Builder
+````mermaid
+sequenceDiagram
+    participant Main
+    participant DatabaseManager
+    participant SQLiteProvider.Builder
+    participant SQLiteProvider
+
+    Main->>+DatabaseManager: getInstance()
+    DatabaseManager->>+SQLiteProvider.Builder: new SQLiteProvider.Builder()
+    SQLiteProvider.Builder-->>-DatabaseManager: builder
+    DatabaseManager->>+SQLiteProvider.Builder: url(url)
+    SQLiteProvider.Builder-->>-DatabaseManager: builder
+    DatabaseManager->>+SQLiteProvider.Builder: build()
+    SQLiteProvider.Builder->>+SQLiteProvider: new SQLiteProvider(this)
+    SQLiteProvider-->>-SQLiteProvider.Builder: provider
+    SQLiteProvider.Builder-->>-DatabaseManager: provider
+    DatabaseManager->>+DatabaseManager: getInstance(provider)
+    DatabaseManager-->>-Main: instance
+````
+## Observer
+````mermaid
+sequenceDiagram
+    participant Main
+    participant DatabaseManager
+    participant EventManager
+    participant LogEventListener
+    participant LogManager
+
+    Main->>+DatabaseManager: getInstance()
+    DatabaseManager->>+EventManager: new EventManager("connect","disconnect")
+    EventManager-->>-DatabaseManager: events
+    DatabaseManager-->>-Main: instance
+
+    Main->>+LogManager: getInstance()
+    LogManager-->>-Main: logManager
+    Main->>+LogManager: getLogger()
+    LogManager-->>-Main: logger
+    Main->>+LogEventListener: new LogEventListener(logger)
+    LogEventListener-->>-Main: logEventListener
+    Main->>+DatabaseManager: registerSubscriber(logEventListener)
+    DatabaseManager->>EventManager: subscribe("connect", logEventListener)
+    DatabaseManager->>EventManager: subscribe("disconnect", logEventListener)
+
+    Main-->+DatabaseManager: getConnection()
+    DatabaseManager->>EventManager: notify("connect","Conectado ao banco")
+    DatabaseManager->>-Main: connection
 ````

@@ -57,6 +57,7 @@ public class DatabaseProvider {
     /**
      * Obtém uma conexão com o banco de dados.
      * @return Uma conexão com o banco de dados.
+     * @throws SQLException Se ocorrer um erro ao obter a conexão.
      */
     public Connection getConnection() throws SQLException {
         try {

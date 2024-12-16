@@ -20,7 +20,7 @@ public final class LogManager {
     /**
      * Objeto Logger utilizado para registrar os logs.
      */
-    private final Logger logger;
+    private Logger logger;
 
     /**
      * Construtor privado para evitar instanciação direta.
@@ -52,6 +52,10 @@ public final class LogManager {
      * @return A instância única do gerenciador de logs.
      */
     public static LogManager getInstance() {
+        if (instance != null && instance.logger != null) {
+            return instance;
+        }
+
         Logger newlogger = Logger.getLogger("justsched");
         try {
             java.util.logging.LogManager.getLogManager().readConfiguration(Files.newInputStream(Paths.get("logger.properties")));

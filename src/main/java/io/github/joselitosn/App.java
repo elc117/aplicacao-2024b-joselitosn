@@ -56,11 +56,17 @@ public class App {
 
     /**
      * Cria as tabelas do banco de dados.
+     * @param connection Conexão com o banco de dados.
+     * @throws SQLException Se ocorrer um erro ao criar as tabelas.
      */
     public static void createTables(Connection connection) throws SQLException {
         // create table if not exists using prepared statement in sqlite
         String sqlNotification = "CREATE TABLE IF NOT EXISTS notification (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, message TEXT, creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, execution_time TIMESTAMP)";
-        PreparedStatement statementNotification = connection.prepareStatement(sqlNotification);
-        statementNotification.execute();
+        try {
+            PreparedStatement statementNotification = connection.prepareStatement(sqlNotification);
+            statementNotification.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -1,7 +1,7 @@
 package io.github.joselitosn.db.providers;
 
 /**
- * Provider de banco de dados SQLite.
+ * Fornecedor de banco de dados SQLite.
  */
 public class SQLiteProvider extends DatabaseProvider {
 
