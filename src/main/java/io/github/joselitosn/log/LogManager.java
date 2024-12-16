@@ -99,6 +99,6 @@ public final class LogManager {
      * @param exception A exceção a ser registrada.
      */
     public void log(Exception exception) {
-        logger.log(new LogRecord(Level.SEVERE, exception.getMessage()), exception);
+        logger.log(new LogRecord(Level.SEVERE, exception.getMessage()));
     }
 }
