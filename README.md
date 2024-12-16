@@ -1,3 +1,7 @@
+# User Story
+**Como um usuário**, eu quero agendar notificações para datas e horários futuros, para que eu possa receber lembretes ou informações importantes no momento apropriado, através de diferentes plataformas de notificação, como e-mail e notificações push no celular.
+
+# Classes
 ## Singleton
 ````mermaid
 classDiagram
