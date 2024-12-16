@@ -33,11 +33,15 @@ public final class DatabaseManager {
         return instance;
     }
 
-    public Connection getConnection() throws SQLException {
-        if (connection == null || connection.isClosed()) {
-            connection = provider.getConnection();
+    public Connection getConnection() {
+        try {
+            if (connection == null || connection.isClosed()) {
+                connection = provider.getConnection();
+            }
+            return provider.getConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return provider.getConnection();
     }
 
     public void closeConnection() throws SQLException {

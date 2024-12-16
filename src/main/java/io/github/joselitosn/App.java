@@ -2,7 +2,6 @@ package io.github.joselitosn;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,6 +12,10 @@ import io.github.joselitosn.db.DatabaseManager;
 import io.github.joselitosn.db.providers.DatabaseProvider;
 import io.github.joselitosn.db.providers.MySQLProvider;
 import io.github.joselitosn.db.providers.SQLiteProvider;
+import io.github.joselitosn.notifications.Notification;
+import io.github.joselitosn.notifications.NotificationHandler;
+import io.github.joselitosn.notifications.NtfyNotification;
+import io.github.joselitosn.notifications.SMTPNotification;
 
 public class App {
     public static void main(String[] args) {
@@ -58,12 +61,14 @@ public class App {
 
         // instância o singleton com o provider selecionado
         DatabaseManager dbManager = DatabaseManager.getInstance(provider);
-        Connection connection;
-        try {
-            connection = dbManager.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        Connection connection = dbManager.getConnection();
+
+        Notification notification = new Notification("Test", "Primeiro Teste");
+
+        NotificationHandler chain = new SMTPNotification("joselitostrike@gmail.com");
+        chain.setNextHandler(new NtfyNotification());
+
+        chain.handle(notification);
 
         // create table
         try {

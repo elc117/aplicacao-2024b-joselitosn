@@ -1,10 +1,5 @@
 package io.github.joselitosn.db.providers;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.ResourceBundle;
-
 public class MySQLProvider extends DatabaseProvider {
 
     private MySQLProvider(Builder builder) {
