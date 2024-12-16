@@ -9,13 +9,24 @@ import jakarta.mail.internet.MimeMessage;
 
 import java.util.Properties;
 
+/**
+ * Classe que implementa o envio de notificações por email utilizando SMTP.
+ */
 public class SMTPNotification extends NotificationHandler {
     private String destination;
 
+    /**
+     * Construtor da classe SMTPNotification.
+     * @param destination O endereço de email de destino.
+     */
     public SMTPNotification(String destination) {
         this.destination = destination;
     }
 
+    /**
+     * Método que envia uma notificação por email.
+     * @param notification A notificação a ser enviada.
+     */
     @Override
     public void handle(Notification notification) {
         // send email notification to destination

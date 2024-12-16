@@ -12,6 +12,9 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
+/**
+ * Interface gráfica para agendamento de notificações.
+ */
 public class NotificationSchedulerGUI extends JFrame {
 
     private JTextField titleField;
@@ -84,6 +87,9 @@ public class NotificationSchedulerGUI extends JFrame {
     }
 
 
+    /**
+     * Salva a notificação no banco de dados.
+     */
     private void saveNotification() {
         String title = titleField.getText();
         String message = messageArea.getText();

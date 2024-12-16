@@ -5,6 +5,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+/**
+ * Fornecedor de conexão com o banco de dados.
+ * Esta classe fornece métodos para obter e fechar conexões com o banco de dados.
+ */
 public class DatabaseProvider {
     protected final String url;
     protected final Properties properties;  // Use Properties for flexibility
@@ -14,6 +18,9 @@ public class DatabaseProvider {
         this.properties = builder.properties;
     }
 
+    /**
+     * Construtor interno para criar instâncias de DatabaseProvider.
+     */
     public static class Builder {
         protected String url;
         protected Properties properties = new Properties(); // Initialize in builder
@@ -47,6 +54,10 @@ public class DatabaseProvider {
         }
     }
 
+    /**
+     * Obtém uma conexão com o banco de dados.
+     * @return Uma conexão com o banco de dados.
+     */
     public Connection getConnection() throws SQLException {
         try {
             return DriverManager.getConnection(url, properties); // Use properties here
@@ -57,6 +68,11 @@ public class DatabaseProvider {
 
     }
 
+    /**
+     * Fecha a conexão com o banco de dados.
+     * @param connection A conexão a ser fechada.
+     * @throws SQLException Se ocorrer um erro ao fechar a conexão.
+     */
     public void closeConnection(Connection connection) throws SQLException {
         if (connection != null && !connection.isClosed()) {
             connection.close();

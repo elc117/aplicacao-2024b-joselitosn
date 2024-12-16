@@ -13,8 +13,10 @@ import io.github.joselitosn.db.providers.SQLiteProvider;
 import io.github.joselitosn.events.EventListener;
 import io.github.joselitosn.events.EventManager;
 
-import javax.xml.crypto.Data;
-
+/**
+ * Classe que gerencia a conexão com o banco de dados.
+ * Utiliza o padrão Singleton para garantir que apenas uma instância da classe seja criada.
+ */
 public final class DatabaseManager {
     private static DatabaseManager instance = null;
     private final DatabaseProvider provider;
@@ -29,12 +31,19 @@ public final class DatabaseManager {
             throw new RuntimeException(e);
         }
     }
-
+    /**
+     * Registra um ouvinte de eventos para os eventos de conexão e desconexão do banco de dados.
+     * @param listener O ouvinte de eventos a ser registrado.
+     */
     public void registerSubscriber(EventListener listener) {
         events.subscribe("connect", listener);
         events.subscribe("disconnect", listener);
     }
-
+    /**
+     * Retorna a instância singleton do gerenciador de banco de dados.
+     * Lê as propriedades do arquivo db.properties para configurar a conexão.
+     * @return A instância singleton do gerenciador de banco de dados.
+     */
     public static DatabaseManager getInstance() {
         if (instance != null)
             return instance;
@@ -75,6 +84,11 @@ public final class DatabaseManager {
         return getInstance(provider);
     }
 
+    /**
+     * Retorna a instância singleton do gerenciador de banco de dados.
+     * @param provider O provedor de banco de dados a ser utilizado.
+     * @return A instância singleton do gerenciador de banco de dados.
+     */
     public static synchronized DatabaseManager getInstance(DatabaseProvider provider) {
         if (instance == null) {
             instance = new DatabaseManager(provider);
@@ -82,6 +96,10 @@ public final class DatabaseManager {
         return instance;
     }
 
+    /**
+     * Retorna a conexão com o banco de dados.
+     * @return A conexão com o banco de dados.
+     */
     public Connection getConnection() {
         try {
             if (connection == null || connection.isClosed()) {
@@ -94,6 +112,10 @@ public final class DatabaseManager {
         }
     }
 
+    /**
+     * Fecha a conexão com o banco de dados.
+     * @throws SQLException Se ocorrer um erro ao fechar a conexão.
+     */
     public void closeConnection() throws SQLException {
         provider.closeConnection(connection);
         events.notify("disconnect", "Disconnected from database:" + provider);

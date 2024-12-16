@@ -8,14 +8,26 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Classe que implementa a notificação via ntfy.sh
+ */
 public class NtfyNotification extends NotificationHandler{
-    String destination;
-    String topic;
+    private String destination;
+    private String topic;
 
+    /**
+     * Construtor da classe NtfyNotification
+     * @param destination URL de destino da notificação
+     * @param topic Tópico da notificação
+     */
     public NtfyNotification(String destination, String topic) {
         this.destination = destination;
         this.topic = topic;
     }
+    /**
+     * Método que envia a notificação para o ntfy.sh
+     * @param notification Objeto Notification contendo as informações da notificação
+     */
     @Override
     public void handle(Notification notification) {
         try {
@@ -34,7 +46,6 @@ public class NtfyNotification extends NotificationHandler{
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
-
 
         System.out.println("Sending ntfy notification: " + notification.getMessage());
         super.handle(notification);

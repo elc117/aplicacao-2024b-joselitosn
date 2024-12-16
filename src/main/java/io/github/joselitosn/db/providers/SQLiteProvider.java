@@ -1,11 +1,21 @@
 package io.github.joselitosn.db.providers;
 
+/**
+ * Provider de banco de dados SQLite.
+ */
 public class SQLiteProvider extends DatabaseProvider {
 
+    /**
+     * Construtor privado para a classe SQLiteProvider.
+     * @param builder O builder usado para criar a instância.
+     */
     private SQLiteProvider(Builder builder) {
         super(builder);
     }
 
+    /**
+     * Builder para a classe SQLiteProvider.
+     */
     public static class Builder extends DatabaseProvider.Builder {
 
         @Override
@@ -18,6 +28,9 @@ public class SQLiteProvider extends DatabaseProvider {
         }
     }
 
+    /**
+     * Retorna uma representação em string do provider.
+     */
     @Override
     public String toString() {
         return "SQLite: " + this.url;

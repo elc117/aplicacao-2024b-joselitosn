@@ -8,28 +8,49 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+/**
+ * Classe responsável por gerenciar os logs da aplicação.
+ */
 public final class LogManager {
+    /**
+     * Instância única do gerenciador de logs.
+     */
     private static volatile LogManager instance;
 
+    /**
+     * Objeto Logger utilizado para registrar os logs.
+     */
     private final Logger logger;
 
+    /**
+     * Construtor privado para evitar instanciação direta.
+     * @param logger Objeto Logger a ser utilizado.
+     */
     private LogManager(Logger logger) {
         this.logger = logger;
     }
 
+    /**
+     * Obtém a instância única do gerenciador de logs.
+     * @param logger Objeto Logger a ser utilizado.
+     * @return A instância única do gerenciador de logs.
+     */
     public static LogManager getInstance(Logger logger) {
         LogManager result = instance;
         if (result != null) {
             return result;
         }
-        synchronized (LogManager.class) {
+        synchronized(LogManager.class) {
             if (instance == null) {
                 instance = new LogManager(logger);
             }
             return instance;
         }
     }
-
+    /**
+     * Obtém a instância única do gerenciador de logs, criando um novo Logger se necessário.
+     * @return A instância única do gerenciador de logs.
+     */
     public static LogManager getInstance() {
         Logger newlogger = Logger.getLogger("justsched");
         try {
@@ -48,12 +69,36 @@ public final class LogManager {
         return LogManager.getInstance(newlogger);
     }
 
+    /**
+     * Obtém o objeto Logger utilizado pelo gerenciador de logs.
+     * @return O objeto Logger utilizado.
+     */
     public Logger getLogger() {
         return this.logger;
     }
 
+    /**
+     * Registra uma mensagem de log.
+     * @param message A mensagem a ser registrada.
+     */
     public void log(String message) {
-        logger.log(new LogRecord(Level.INFO,message));
+        logger.log(new LogRecord(Level.INFO, message));
     }
 
+    /**
+     * Registra uma mensagem de log com um nível de severidade específico.
+     * @param level O nível de severidade da mensagem.
+     * @param message A mensagem a ser registrada.
+     */
+    public void log(Level level, String message) {
+        logger.log(new LogRecord(level, message));
+    }
+
+    /**
+     * Registra uma exceção como uma mensagem de log.
+     * @param exception A exceção a ser registrada.
+     */
+    public void log(Exception exception) {
+        logger.log(new LogRecord(Level.SEVERE, exception.getMessage()), exception);
+    }
 }
