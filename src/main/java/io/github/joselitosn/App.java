@@ -1,5 +1,6 @@
 package io.github.joselitosn;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -7,11 +8,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import io.github.joselitosn.db.DatabaseManager;
 import io.github.joselitosn.db.providers.DatabaseProvider;
 import io.github.joselitosn.db.providers.MySQLProvider;
 import io.github.joselitosn.db.providers.SQLiteProvider;
+import io.github.joselitosn.log.LogEventListener;
+import io.github.joselitosn.log.LogManager;
 import io.github.joselitosn.notifications.Notification;
 import io.github.joselitosn.notifications.NotificationHandler;
 import io.github.joselitosn.notifications.NtfyNotification;
@@ -24,6 +30,22 @@ public class App {
         String dbDatabase;
         String dbUsername;
         String dbPassword;
+
+        Logger logger = Logger.getLogger("justsched");
+        LogManager logManager = LogManager.getInstance(logger);
+
+        try {
+            java.util.logging.LogManager.getLogManager().readConfiguration(Files.newInputStream(Paths.get("logger.properties")));
+        } catch (SecurityException | IOException e1) {
+            e1.printStackTrace();
+        }
+
+        logger.setLevel(Level.INFO);
+        try {
+            logger.addHandler(new FileHandler("justsched.log", true));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         // read database file location DB_URL from config file
         Properties properties = new Properties();
@@ -61,12 +83,13 @@ public class App {
 
         // instância o singleton com o provider selecionado
         DatabaseManager dbManager = DatabaseManager.getInstance(provider);
+        dbManager.registerSubscriber(new LogEventListener(logger));
         Connection connection = dbManager.getConnection();
 
         Notification notification = new Notification("Test", "Primeiro Teste");
 
         NotificationHandler chain = new SMTPNotification("joselitostrike@gmail.com");
-        chain.setNextHandler(new NtfyNotification());
+        chain.setNextHandler(new NtfyNotification("https://ntfy.sh/", "notifications"));
 
         chain.handle(notification);
 

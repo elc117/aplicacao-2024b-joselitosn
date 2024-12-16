@@ -4,11 +4,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import io.github.joselitosn.db.providers.DatabaseProvider;
+import io.github.joselitosn.events.EventListener;
+import io.github.joselitosn.events.EventManager;
 
 public final class DatabaseManager {
     private static DatabaseManager instance = null;
     private final DatabaseProvider provider;
     private Connection connection;
+    private EventManager events = new EventManager("connect", "disconnect");
 
     private DatabaseManager(DatabaseProvider provider) {
         this.provider = provider;
@@ -26,6 +29,11 @@ public final class DatabaseManager {
         return instance;
     }
 
+    public void registerSubscriber(EventListener listener) {
+        events.subscribe("connect", listener);
+        events.subscribe("disconnect", listener);
+    }
+
     public static synchronized DatabaseManager getInstance(DatabaseProvider provider) {
         if (instance == null) {
             instance = new DatabaseManager(provider);
@@ -38,6 +46,7 @@ public final class DatabaseManager {
             if (connection == null || connection.isClosed()) {
                 connection = provider.getConnection();
             }
+            events.notify("connect", "Connected to database:" + provider);
             return provider.getConnection();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -46,5 +55,6 @@ public final class DatabaseManager {
 
     public void closeConnection() throws SQLException {
         provider.closeConnection(connection);
+        events.notify("disconnect", "Disconnected from database:" + provider);
     }
 }

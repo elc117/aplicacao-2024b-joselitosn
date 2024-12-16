@@ -9,18 +9,19 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class NtfyNotification extends NotificationHandler{
+    String destination;
+    String topic;
+
+    public NtfyNotification(String destination, String topic) {
+        this.destination = destination;
+        this.topic = topic;
+    }
     @Override
     public void handle(Notification notification) {
-        // send ntfy notification to destination
-        String url = "https://ntfy.sh/";
-        String topic = "notifications";
-        String title = notification.getTitle();
-        String message = notification.getMessage();
-
         try {
-            URI uri = new URI(url + topic);
+            URI uri = new URI(this.destination + this.topic);
             URL urlConn = uri.toURL();
-            String data = "{\"title\": \"" + title + "\", \"message\": \"" + message + "\"}";
+            String data = "{\"title\": \"" + notification.getTitle() + "\", \"message\": \"" + notification.getMessage() + "\"}";
             HttpURLConnection conn = (HttpURLConnection) urlConn.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");

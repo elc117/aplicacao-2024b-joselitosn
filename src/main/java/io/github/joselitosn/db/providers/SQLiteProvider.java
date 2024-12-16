@@ -17,4 +17,9 @@ public class SQLiteProvider extends DatabaseProvider {
             return new SQLiteProvider(this);
         }
     }
+
+    @Override
+    public String toString() {
+        return "SQLite: " + this.url;
+    }
 }

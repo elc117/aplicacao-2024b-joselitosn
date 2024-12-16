@@ -21,4 +21,9 @@ public class MySQLProvider extends DatabaseProvider {
             return new MySQLProvider(this);
         }
     }
+
+    @Override
+    public String toString() {
+        return "MySQL: " + this.url + " database: " + this.properties.getProperty("database");
+    }
 }
