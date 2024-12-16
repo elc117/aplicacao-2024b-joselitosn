@@ -1,7 +1,6 @@
 package io.github.joselitosn.log;
 
 import io.github.joselitosn.events.EventListener;
-import io.github.joselitosn.notifications.Notification;
 
 import java.util.logging.Logger;
 

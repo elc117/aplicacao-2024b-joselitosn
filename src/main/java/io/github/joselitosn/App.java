@@ -31,21 +31,7 @@ public class App {
         String dbUsername;
         String dbPassword;
 
-        Logger logger = Logger.getLogger("justsched");
-        LogManager logManager = LogManager.getInstance(logger);
-
-        try {
-            java.util.logging.LogManager.getLogManager().readConfiguration(Files.newInputStream(Paths.get("logger.properties")));
-        } catch (SecurityException | IOException e1) {
-            e1.printStackTrace();
-        }
-
-        logger.setLevel(Level.INFO);
-        try {
-            logger.addHandler(new FileHandler("justsched.log", true));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        LogManager logManager = LogManager.getInstance();
 
         // read database file location DB_URL from config file
         Properties properties = new Properties();
@@ -83,7 +69,7 @@ public class App {
 
         // instância o singleton com o provider selecionado
         DatabaseManager dbManager = DatabaseManager.getInstance(provider);
-        dbManager.registerSubscriber(new LogEventListener(logger));
+        dbManager.registerSubscriber(new LogEventListener(logManager.getLogger()));
         Connection connection = dbManager.getConnection();
 
         Notification notification = new Notification("Test", "Primeiro Teste");
